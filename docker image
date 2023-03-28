@@ -1,0 +1,21 @@
+pipeline {
+  agent any
+
+  parameters {
+    string(name: 'DOCKER_IMAGE', description: 'Docker image name to use for the build')
+  }
+
+  stages {
+    stage('Get Docker ID') {
+      steps {
+        script {
+          def dockerImage = "${params.DOCKER_IMAGE}"
+          def imagesOutput = sh(script: "docker image ls --format '{{.ID}}\\t{{.Repository}}:{{.Tag}}' ${dockerImage}", returnStdout: true)
+          def image = imagesOutput.trim()
+          def dockerId = image.tokenize()[0]
+          echo "Docker ID of ${dockerImage}: ${dockerId}"
+        }
+      }
+    }
+  }
+}
