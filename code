@@ -1,0 +1,14 @@
+stage('Get Docker Image ID') {
+  steps {
+    script {
+      // Run a shell command to retrieve the ID of the Docker image
+      def imageId = sh(returnStdout: true, script: "docker inspect --format='{{.Id}}' my-image").trim()
+      
+      // Print the image ID to the Jenkins console
+      println "Docker image ID: $imageId"
+      
+      // Use the image ID in your Black Duck scan command
+      sh "curl -s -L https://detect.synopsys.com/detect.sh | bash -s -- --detect.tools=DOCKER --detect.docker.image=$imageId ..."
+    }
+  }
+}
